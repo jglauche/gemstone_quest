@@ -6,7 +6,9 @@ class DemoLevel < Level
     create_actor :background
     
     @mana = create_actor :mana, :x => 650, :y => 0
-    @map = create_actor :map
+    
+    
+    @grass_land = create_actor :grass 
     @inv = {}
     
     @inventory_offset_x = 820
