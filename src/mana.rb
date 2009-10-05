@@ -9,7 +9,7 @@ class ManaView < ActorView
       str << " "
     end 
  
-    text = font.render str, true, [255,255,255], [0,0,0]
+    text = font.render str, true, [255,255,255] #, [0,0,0]
     text.blit target.screen, [@actor.x, @actor.y]
   end
 end
