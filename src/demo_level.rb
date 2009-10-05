@@ -49,10 +49,14 @@ class DemoLevel < Level
     input_manager.clear_hooks 
         
     input_manager.reg KeyDownEvent, K_2 do
-      if @mana.has?(@mana.tower_cost)
-        tower_building_mode()
-      end
+      tower_building_mode()
     end  
+    
+    input_manager.reg KeyDownEvent, K_T do
+      tower_building_mode()
+    end  
+    
+    
     input_manager.reg KeyDownEvent, K_C do
       if @mana.has?(@mana.gem_cost) and not inventory_full?
         create_gem
@@ -115,6 +119,8 @@ class DemoLevel < Level
   end
   
   def tower_building_mode
+    return unless @mana.has?(@mana.tower_cost)
+    
     @buildmode = create_actor(:tower_builder)
     input_manager.reg MouseMotionEvent do |ev|
       @buildmode.update_mouse_pos ev.pos
