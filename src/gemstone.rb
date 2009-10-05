@@ -26,8 +26,9 @@ class Gemstone < Actor
   
   
   def self.choose_gem_to_create
-    arr = [:amethyst, :ruby, :azurite, :malachite, :diamond].shuffle!
-    return arr.first
+    #   arr = [:amethyst, :ruby, :azurite, :malachite, :diamond].shuffle!
+    arr = [:amethyst, :ruby, :azurite, :malachite, :diamond]
+    arr[rand(arr.size)]
   end  
   
   def recharge_time

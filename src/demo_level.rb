@@ -74,15 +74,14 @@ class DemoLevel < Level
     end
     
     input_manager.reg MouseMotionEvent do |ev|
-      unless @active_tower_radius == nil
-        @active_tower_radius.remove_self 
-        @active_tower_radius = nil
+      unless @active_tower == nil
+        @active_tower = @active_tower.hide_radius
+        @active_tower = nil
       end
       if item = get_gem_accepting_object_on_this_position(ev.pos)
         if item.class == Tower and item.gemstone != nil
-          x, y = item.get_center_pos
-          @active_tower_radius = create_actor :tower_radius, :x => x, :y => y
-          @active_tower_radius.radius = item.range
+          @active_tower = item
+          item.show_radius
         end
       end
     end 

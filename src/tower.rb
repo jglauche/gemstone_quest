@@ -10,6 +10,17 @@ class Tower < Actor
     
     @gemstone = nil
     @recharge_time = 1000 # ms
+    x,y = get_center_pos
+    @radius = spawn :tower_radius, :visible => false, :x => x, :y => y
+  end
+  
+  def show_radius
+    @radius.radius = range
+    @radius.show
+  end
+  
+  def hide_radius
+    @radius.hide
   end
   
   def self.build_cost
