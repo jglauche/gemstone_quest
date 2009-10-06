@@ -1,6 +1,7 @@
 require 'level'
 require 'ftor'
 require "gemstone"
+require "two_d_grid_map"
 class DemoLevel < Level
   def setup
     create_actor :background
@@ -25,9 +26,34 @@ class DemoLevel < Level
     @dragged_gem = nil
     @buildmode = nil
     
-    @towers = []
+    @towers = []  
+    @monsters = []
     
-
+    # will put that into a level config file later..
+    @path = [[0,3],[1,3],[2,3],[3,3],[4,3],[5,3],[6,3],[6,4],[6,5],[7,5],[8,5],[9,5],[10,5],[11,5]]
+    
+    @pathmap = TwoDGridMap.new(MAP_BLOCKS_X, MAP_BLOCKS_Y)  
+    MAP_BLOCKS_X.times do |x|
+      MAP_BLOCKS_Y.times do |y|
+        if @path.include? [x,y]
+          track = create_actor :track 
+          track.x, track.y = map_to_pos_coordinates([x,y])
+          # dummy
+          track.action = :horizontal
+        else
+          # block all non track ways
+          @pathmap.place(TwoDGridLocation.new(x,y)) 
+        end
+      end
+    end
+    
+    # our dummy monster
+    monster = create_actor :monster
+    monster.x, monster.y = map_to_pos_coordinates(@path.first)
+    monster.action = :monster1
+    
+    @monsters << monster
+    
     reset_hooks  
 
   end
@@ -151,6 +177,7 @@ class DemoLevel < Level
   def update(time)
     @mana.tick(time)
     @towers.map{|l| l.tick(time)}
+    @monsters.map{|l| l.move}
   end
 
   # inventory stuff
