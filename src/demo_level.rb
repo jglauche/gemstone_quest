@@ -8,7 +8,7 @@ class DemoLevel < Level
     @mana = create_actor :mana, :x => 650, :y => 0
     
     
-    @grass_land = create_actor :grass 
+    @grass_land = create_actor :grass, :x => 20, :y => 20
     @inv = {}
     
     @inventory_offset_x = 820

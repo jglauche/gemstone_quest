@@ -1,7 +1,7 @@
 class ManaView < ActorView
   def draw(target, x_off, y_off)
     font = @mode.resource_manager.load_font 'FreeSans.ttf', 12
-    return if font == nil
+    return if font.nil?
     
     str = "Mana: #{sprintf('%0.1f',@actor.mana)} / #{@actor.max_mana}"
     
@@ -16,7 +16,7 @@ end
 
 class Mana < Actor
   has_behaviors :layered => {:layer => 2}
-  attr_accessor :mana, :max_mana, :x, :y
+  attr_accessor :mana, :max_mana
   
   def setup
     @mana = 1000
