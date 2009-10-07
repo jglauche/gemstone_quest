@@ -50,7 +50,7 @@ class DemoLevel < Level
     # our dummy monster
     monster = create_actor :monster
     monster.x, monster.y = map_to_pos_coordinates(@path.first)
-    monster.action = :monster1
+    monster.monster_type = :monster1
     
     @monsters << monster
     
@@ -177,7 +177,7 @@ class DemoLevel < Level
   def update(time)
     @mana.tick(time)
     @towers.map{|l| l.tick(time)}
-    @monsters.map{|l| l.move}
+    @monsters.map{|l| l.move(@pathmap)}
   end
 
   # inventory stuff
