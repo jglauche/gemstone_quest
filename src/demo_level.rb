@@ -32,7 +32,7 @@ class DemoLevel < Level
     # will put that into a level config file later..
     @path = [[0,3],[1,3],[2,3],[3,3],[4,3],[5,3],[6,3],[6,4],[6,5],[7,5],[8,5],[9,5],[10,5],[11,5]]
     
-    @pathmap = TwoDGridMap.new(MAP_BLOCKS_X, MAP_BLOCKS_Y)  
+  #  @pathmap = TwoDGridMap.new(MAP_BLOCKS_X, MAP_BLOCKS_Y)  
     MAP_BLOCKS_X.times do |x|
       MAP_BLOCKS_Y.times do |y|
         if @path.include? [x,y]
@@ -42,7 +42,7 @@ class DemoLevel < Level
           track.action = :horizontal
         else
           # block all non track ways
-          @pathmap.place(TwoDGridLocation.new(x,y)) 
+   #       @pathmap.place(TwoDGridLocation.new(x,y)) 
         end
       end
     end
@@ -177,7 +177,7 @@ class DemoLevel < Level
   def update(time)
     @mana.tick(time)
     @towers.map{|l| l.tick(time)}
-    @monsters.map{|l| l.move(@pathmap)}
+    @monsters.map{|l| l.move(@path)}
   end
 
   # inventory stuff

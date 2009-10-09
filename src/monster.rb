@@ -4,6 +4,21 @@ class MonsterView < ActorView
     x = @actor.x + 8
     y = @actor.y + 8 
     monster = @mode.resource_manager.load_image "monster/monster1.png"
+    
+    # std monster origentation should be :right
+    rot = 0
+    case @actor.orientation 
+      when :down  
+        rot = -90
+      when :up
+        rot = 90
+      when :left
+        rot = 180
+    end   
+    if rot != 0
+      monster = monster.rotozoom(rot, 1)       
+    end
+    
     monster.blit(target.screen,[x,y])  
     
     # health bar
@@ -26,14 +41,15 @@ class Monster < Actor
   
   has_behaviors :layered => {:layer => 5}
   
-  attr_accessor :monster_type, :hitpoints, :max_hitpoints
+  attr_accessor :monster_type, :hitpoints, :max_hitpoints, :orientation
   
   def setup
     # dummy stuff
     @monster_type = "monster1"
-    @speed = 0.5
+    @speed = 1
     @hitpoints = 20
     @max_hitpoints = 20
+    
   end
   
   def alive?
@@ -51,14 +67,65 @@ class Monster < Actor
     [x,y]
   end
   
-  def move(pathmap)
+  def move(path)
     return nil unless alive?
-    # TODO: 
-    # * find out the orientation we're headed to
-    # * check if we would get off the path if we're continueing with the current speed
-    # * if yes, change the origentation according to the path
-    @x = @x + @speed # dummy
-            
+    # first move?
+    unless @pathitem 
+      @pathitem = 0           
+      @orientation = find_out_origentation(path)
+      puts "new origentation is #{@orientation.inspect}"
+    end
+    
+
+    x, y = simulate_movement
+    # TODO: fix the calculation if we're moving onto a new map tile
+    # the current implementation does only allow a limited speed choice
+    mod_x = (x-MAP_OFFSET[0]) % ITEMSIZE 
+    mod_y = (y-MAP_OFFSET[1]) % ITEMSIZE
+#    puts "modx/y: #{mod_x} , #{mod_y}"
+    if ((@orientation == :right or @orientation == :left) and mod_x == 0) or
+       ((@orientation == :up or @orientation == :down) and mod_y == 0)
+      @pathitem += 1
+      @orientation = find_out_origentation(path)        
+      x, y = simulate_movement
+      puts "new origentation is #{@orientation.inspect}"
+    end
+    @x = x
+    @y = y
+  end
+  
+  def find_out_origentation(path)
+    pos1 = path[@pathitem]
+    pos2 = path[@pathitem+1]
+    return @origentation if pos1 == nil or pos2 == nil
+    x1, y1 = pos1
+    x2, y2 = pos2
+    puts "moving from #{x1},#{y1} to #{x2},#{y2}"
+    if x1 > x2
+      return :left  
+    elsif x2 > x1
+      return :right
+    elsif y1 > y2
+       return :up
+    else
+       return :down
+   end
+  end
+  
+  def simulate_movement
+    x = @x
+    y = @y
+    case @orientation
+      when :right    
+          x = @x + @speed
+      when :left
+          x = @x - @speed
+      when :up
+          y = @y - @speed
+      when :down 
+          y = @y + @speed
+    end
+    return [x,y]
   end
   
   def take_damage(hp)
