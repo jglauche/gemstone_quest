@@ -99,18 +99,7 @@ class Monster < Actor
     pos1 = path[@pathitem]
     pos2 = path[@pathitem+1]
     return @origentation if pos1 == nil or pos2 == nil
-    x1, y1 = pos1
-    x2, y2 = pos2
-    #puts "moving from #{x1},#{y1} to #{x2},#{y2}"
-    if x1 > x2
-      return :left  
-    elsif x2 > x1
-      return :right
-    elsif y1 > y2
-       return :up
-    else
-       return :down
-   end
+    get_origentation(pos1, pos2) # tools.rb
   end
   
   def simulate_movement

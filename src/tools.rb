@@ -49,4 +49,20 @@ end
     arr.map{|a,b| [a+x, b+y]}
   end
   
+  def get_origentation(pos1,pos2)
+    return if pos1 == nil or pos2 == nil
+    x1, y1 = pos1
+    x2, y2 = pos2
+    
+    if x1 > x2
+      return :left  
+    elsif x2 > x1
+      return :right
+    elsif y1 > y2
+       return :up
+    else
+       return :down
+   end
+  end
+  
   
