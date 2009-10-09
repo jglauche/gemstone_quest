@@ -36,12 +36,9 @@ class DemoLevel < Level
     track_creator = create_actor :track_creator
     track_creator.create_tracks(@path)
 
-    # our dummy monster
-    monster = create_actor :monster
-    monster.x, monster.y = map_to_pos_coordinates(@path.first)
-    monster.monster_type = :monster1
-    
-    @monsters << monster
+    @wave = create_actor :wave
+    @wave.start_coordinates = @path.first
+  
     
     reset_hooks  
 
@@ -49,7 +46,7 @@ class DemoLevel < Level
   
   # for map positions only
   def object_on_this_position?(x,y)
-    @towers.map{|t| [t.x,t.y] == [x,y]}.include? true  
+    @towers.map{|t| [t.x,t.y] == [x,y]}.include? true or @path.include?(pos_to_map_coordinates([x,y]))   
   end
   
   def get_gem_accepting_object_on_this_position(pos)
@@ -64,7 +61,8 @@ class DemoLevel < Level
   
   def reset_hooks
     input_manager.clear_hooks 
-        
+    @combine_mode = false
+          
     input_manager.reg KeyDownEvent, K_2 do
       tower_building_mode()
     end  
@@ -79,10 +77,21 @@ class DemoLevel < Level
         create_gem
       end
     end
+
+    input_manager.reg KeyDownEvent, K_N do
+      @wave.spawn_wave!
+    end
+    
+    input_manager.reg KeyDownEvent, K_M do
+      @mana.upgrade_mana
+    end
+    
+    input_manager.reg KeyDownEvent, K_G do
+      @combine_mode = true
+    end    
     
     input_manager.reg MouseDownEvent do |ev|
       x,y = ev.pos          
-      # clicked inside inventory?
       item = check_if_inventory_item_is_triggered([x,y]) || get_gem_accepting_object_on_this_position(ev.pos)
       unless item == nil or item.gemstone == nil
         @dragged_gem = item.gemstone.drag_gem(item)
@@ -110,11 +119,20 @@ class DemoLevel < Level
       @dragged_gem.set_pos(ev.pos)
     end  
     input_manager.reg MouseUpEvent do |ev|
-      # inventory?
       item = nil
+      # inventory?
       taking_item = check_if_inventory_item_is_triggered(ev.pos)
-      if taking_item == nil
+      if taking_item == nil # something on the map accepting this gem?
         taking_item = get_gem_accepting_object_on_this_position(ev.pos) # might be still nil
+      end
+      
+      if @combine_mode and taking_item and taking_item.gemstone
+        # get gem from taking item, will be taken on next if
+        gem = taking_item.take_gem(nil)
+        @dragged_gem.combine(gem) # gem.combine(@dragged_gem)
+        gem.hide()
+        gem = nil
+        @combine_mode = false
       end
       
       if taking_item
@@ -143,6 +161,7 @@ class DemoLevel < Level
     end
     
     input_manager.reg MouseDownEvent do |ev|
+      return if @buildmode == nil
       x,y = @buildmode.get_build_position ev.pos          
       unless object_on_this_position?(x,y)
         if @mana.take(@mana.tower_cost)
@@ -166,6 +185,12 @@ class DemoLevel < Level
   def update(time)
     # Mana gain
     @mana.tick(time)
+    # monster spawn
+    new_monster = @wave.tick(time)
+    if new_monster
+      @monsters << new_monster
+    end
+    
     # Monster move
     @monsters.map{|l| l.move(@path)}
     # towers recharge & "collect" their shots fired

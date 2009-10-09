@@ -27,15 +27,59 @@ class Gemstone < Actor
   has_behaviors :updatable, :layered => {:layer => 3}
 
 
-  attr_accessor :range
-  attr_accessor :sender
+  attr_accessor :range, :sender, :subtypes, :min_damage, :max_damage, :recharge_time, 
+                :special_modificator, :saturation
 
+
+  def setup
+    @special_modificator = 1
+    @subtypes = []
+  end
 
   def self.choose_gem_to_create
     #   arr = [:amethyst, :ruby, :azurite, :malachite, :diamond].shuffle!
     arr = [:amethyst, :ruby, :azurite, :malachite, :diamond]
     arr[rand(arr.size)]
   end  
+  
+  def combine(othergem)
+    if self.class == othergem.class and (@subtypes == nil or @subtypes.size == 0)
+      combine_pure(othergem)
+    else
+      combine_unpure(othergem)
+    end
+
+    if @recharge_time < 50
+      @recharge_time = 50
+    end
+
+  end
+  
+  
+  # combine pure gems:
+  # gives great damage bonus, gives great special bonus
+  # increases saturation (incrased saturatin = better armor penetration later)
+  def combine_pure(othergem)
+    @min_damage += othergem.min_damage / 2.0
+    @max_damage += othergem.max_damage / 1.5
+    @recharge_time = (@recharge_time + othergem.recharge_time) / 2.02
+    @range = (@range + othergem.range) / 1.97    
+    @special_modificator += 0.2
+    @saturation = (@saturation + othergem.saturation) / 1.9
+  end
+
+  # combine unpure gems:
+  # gives moderate damage bonus, good recharge & range bonus
+  # specials will have lower effects
+  def combine_unpure(othergem)
+    @min_damage = othergem.min_damage / 8.0
+    @max_damage += othergem.max_damage / 2.0
+    @recharge_time = (@recharge_time + othergem.recharge_time) / 2.04
+    @range = (@range + othergem.range) / 1.92 
+    @special_modificator += 0.01
+    @subtypes << othergem.class
+  end
+
 
   def recharge_time
     @recharge_time

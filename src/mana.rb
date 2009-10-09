@@ -22,15 +22,30 @@ class Mana < Actor
     @mana = 1000
     @max_mana = 2000    
     
-    @mana_gain_time = 100
-    @mana_gain_pct = 0.01
+    @mana_gain_time = 400
+    @mana_gain_pct = 0.005
     @recharge_time = @mana_gain_time
+    
+    @multiplicator = 1
+    
+    @upgrade_cost = 500
     
     @towers_built = 0
   end
    
+  def upgrade_mana
+    if take(@upgrade_cost)
+      @multiplicator += 0.05
+      @upgrade_cost += 100 * @multiplicator
+      @max_mana += 1000*@multiplicator
+      if @upgrade_cost > @max_mana*0.95
+        @upgrade_cost = @max_mana*0.95
+      end
+    end
+  end
+   
   def tower_cost
-    200 * (1 + 0.1 * @towers_built)
+    200 * (1 + 0.2 * @towers_built)
   end
   
   def gem_cost
@@ -51,7 +66,7 @@ class Mana < Actor
   end
   
   def gain(num)
-    @mana += num
+    @mana += num * @multiplicator
     if @mana > @max_mana
       @mana = @max_mana
     end

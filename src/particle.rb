@@ -4,8 +4,10 @@ class ParticleView < ActorView
     #surface.draw_line(@position, @monster.get_position, @color)
     return unless @actor.alive
     color = @actor.color
-    color[3] = 255
     
+    if color[3] > 255
+      color[3] = 255
+    end
     target.screen.draw_circle_s([@actor.x, @actor.y], @actor.radius, color)
   end
   

@@ -9,6 +9,7 @@ class Azurite < Gemstone
     @min_damage = 2
     @max_damage = 5
     @melting_point = 200
+    super
   end
   
 

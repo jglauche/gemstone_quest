@@ -10,6 +10,7 @@ class Malachite < Gemstone
     @min_damage = 3
     @max_damage = 6
     @melting_point = 164
+    super
   end
   
 

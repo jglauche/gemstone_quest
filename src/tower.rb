@@ -33,8 +33,10 @@ class Tower < Actor
   end
   
   def take_gem(gem)
-    gem.x = @x+8
-    gem.y = @y+8
+    unless gem == nil
+      gem.x = @x+8
+      gem.y = @y+8
+    end
     oldgem = @gemstone
     @gemstone = gem
     reset_recharge_time    

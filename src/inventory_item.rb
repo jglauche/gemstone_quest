@@ -23,9 +23,10 @@ class InventoryItem < Actor
   
   
   def take_gem(newgem)
-    newgem.x = @x+4
-    newgem.y = @y+4
-  #  puts "at #{@pos.inspect} got a gem, have: #{@magic_gem.inspect}"
+    unless newgem == nil
+      newgem.x = @x+4
+      newgem.y = @y+4
+    end
     give_gem = nil
     unless @gemstone == nil
    #   puts "but already have one"

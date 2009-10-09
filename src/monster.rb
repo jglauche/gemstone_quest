@@ -42,7 +42,7 @@ class Monster < Actor
   
   has_behaviors :layered => {:layer => 5}
   
-  attr_accessor :monster_type, :hitpoints, :max_hitpoints, :orientation
+  attr_accessor :monster_type, :hitpoints, :max_hitpoints, :orientation, :speed
   
   def setup
     # dummy stuff
@@ -56,7 +56,12 @@ class Monster < Actor
   def alive?
     true if @hitpoints > 0
   end
-    
+  
+  def set_hitpoints(hp)
+    @hitpoints = hp
+    @max_hitpoints = hp
+  end  
+  
   def get_position
     [@x,@y]
   end

@@ -9,7 +9,11 @@ class Diamond < Gemstone
     @min_damage = 15
     @max_damage = 25
     @melting_point = 3550
+    super
   end
+  
+  # idea for special effect:
+  # 2 percent chance of insta-kill
   
   
 end
