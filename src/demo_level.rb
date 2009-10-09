@@ -178,7 +178,9 @@ class DemoLevel < Level
   
   def disable_building_mode
      reset_hooks
-     @buildmode.update_mouse_pos [-1,-1] # that forces to undraw it.
+     unless @buildmode == nil 
+       @buildmode.update_mouse_pos [-1,-1] # that forces to undraw it.
+     end
      @buildmode = nil
   end
   
