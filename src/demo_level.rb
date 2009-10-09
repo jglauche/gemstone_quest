@@ -1,7 +1,7 @@
 require 'level'
 require 'ftor'
 require "gemstone"
-require "two_d_grid_map"
+require "particle"
 class DemoLevel < Level
   def setup
     create_actor :background
@@ -28,6 +28,7 @@ class DemoLevel < Level
     
     @towers = []  
     @monsters = []
+    @particles = []
     
     # will put that into a level config file later..
     @path = [[0,3],[1,3],[2,3],[3,3],[4,3],[5,3],[6,3],[6,4],[6,5],[7,5],[8,5],[9,5],[10,5],[11,5]]
@@ -175,9 +176,30 @@ class DemoLevel < Level
   end
   
   def update(time)
+    # Mana gain
     @mana.tick(time)
-    @towers.map{|l| l.tick(time)}
+    # Monster move
     @monsters.map{|l| l.move(@path)}
+    # towers recharge & "collect" their shots fired
+    ret = @towers.map{|l| l.tick(time, @monsters)}
+    ret.each do |r|
+      if r.kind_of? Particle
+        @particles << r         
+      end
+    end 
+    
+    # update particles
+    @particles.map{|p| p.update}
+    @particles = @particles.delete_if{|p| !p.alive}
+    
+        
+    # gain mana for dead monsters and remove them from the list
+    @monsters.each do |m| 
+      unless m.alive? 
+        @mana.gain(m.max_hitpoints)
+      end
+    end
+    @monsters = @monsters.delete_if{|m| !m.alive?}
   end
 
   # inventory stuff

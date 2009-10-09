@@ -53,8 +53,12 @@ class Tower < Actor
     return @gemstone.range
   end
   
-  def tick(last_tick_time)
+  def tick(last_tick_time, monsters)
     @recharge_time -= last_tick_time
+    
+    if ready?
+      return fire_at_monsters_in_range(monsters)
+    end
   end
   
 #  def draw(surface)
@@ -89,19 +93,19 @@ class Tower < Actor
     # TODO: fire at the one with shortest distance or loweset HP or so
     monsters.each_with_index do |monster, i|
       if dist[i] <= range
-        fire!(monster)
-        return
+        return fire!(monster)
       end 
     end    
-    
-    #puts "Monster distances = #{dist}" 
-    
   end
   
   def fire!(monster)
     reset_recharge_time
-    Particle.fire_particle(get_center_pos, monster, @gemstone.get_damage, @gemstone.get_color)
-    #monster.take_damage(1)
+    x,y = get_center_pos
+    particle = spawn :particle, :x => x, :y => y
+    particle.damage = @gemstone.get_damage
+    particle.color = @gemstone.get_color
+    particle.monster = monster
+    return particle
   end
 
   

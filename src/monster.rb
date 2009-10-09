@@ -1,6 +1,7 @@
 class MonsterView < ActorView
   
   def draw(target, x_off, y_off)
+    return unless @actor.alive?
     x = @actor.x + 8
     y = @actor.y + 8 
     monster = @mode.resource_manager.load_image "monster/monster1.png"
@@ -73,7 +74,7 @@ class Monster < Actor
     unless @pathitem 
       @pathitem = 0           
       @orientation = find_out_origentation(path)
-      puts "new origentation is #{@orientation.inspect}"
+     # puts "new origentation is #{@orientation.inspect}"
     end
     
 
@@ -88,7 +89,7 @@ class Monster < Actor
       @pathitem += 1
       @orientation = find_out_origentation(path)        
       x, y = simulate_movement
-      puts "new origentation is #{@orientation.inspect}"
+   #   puts "new origentation is #{@orientation.inspect}"
     end
     @x = x
     @y = y
@@ -100,7 +101,7 @@ class Monster < Actor
     return @origentation if pos1 == nil or pos2 == nil
     x1, y1 = pos1
     x2, y2 = pos2
-    puts "moving from #{x1},#{y1} to #{x2},#{y2}"
+    #puts "moving from #{x1},#{y1} to #{x2},#{y2}"
     if x1 > x2
       return :left  
     elsif x2 > x1
@@ -130,9 +131,6 @@ class Monster < Actor
   
   def take_damage(hp)
     @hitpoints -= hp
-    if @hitpoints <= 0
-      $mana.gain(@max_hitpoints/10)
-    end
   end
 
 end
