@@ -2,7 +2,7 @@ class MonsterView < ActorView
   
   def draw(target, x_off, y_off)
     return unless @actor.alive?
-    x = @actor.x 
+    x = @actor.x + 8
     y = @actor.y + 8 
     monster = @mode.resource_manager.load_image "monster/monster1.png"
     
@@ -86,7 +86,17 @@ class Monster < Actor
     @tilepos = simulate_movement(@tilepos)
 
     if @tilepos[0] > 32 or @tilepos[1] > 32 or @tilepos[0] < -32 or @tilepos[1] < -32
-      @tilepos = [0,0]
+      case @orientation 
+        when :right
+          @tilepos[0] -= 32
+        when :left
+          @tilepos[0] += 32
+        when :up
+          @tilepos[1] += 32
+        when :down
+          @tilepos[1] -= 32
+      end
+      #@tilepos = [0,0]
       @pathitem += 1
       @orientation = find_out_origentation(path)      
     end
