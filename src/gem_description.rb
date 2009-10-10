@@ -4,10 +4,7 @@ class GemDescriptionView < ActorView
     return if @font.nil?
     @y_offset = 0
     
-    render_font target, "Gem, Type #{@actor.gem.class}"  
-    if @actor.gem.subtypes
-      render_font target,  "including " + actor.gem.subtypes.map{|l| l.to_s}.join(",")
-    end
+    render_font target,  "Gem " + actor.gem.gemtypes.map{|l| l.to_s}.join(",")
     render_font target, "Damage: #{fmt(@actor.gem.min_damage)} - #{fmt(@actor.gem.max_damage)}"  
     render_font target, "Saturation: #{fmt(@actor.gem.saturation)}"  
     render_font target, "Recharge Time (ms): #{fmt(@actor.gem.recharge_time)}"  

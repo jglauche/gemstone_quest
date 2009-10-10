@@ -27,13 +27,13 @@ class Gemstone < Actor
   has_behaviors :updatable, :layered => {:layer => 3}
 
 
-  attr_accessor :range, :sender, :subtypes, :min_damage, :max_damage, :recharge_time, 
+  attr_accessor :range, :sender, :gemtypes, :min_damage, :max_damage, :recharge_time, 
                 :special_modificator, :saturation
 
 
   def setup
     @special_modificator = 1
-    @subtypes = []
+    @gemtypes = [self.class.to_s]
     @description = spawn :gem_description, :visible => false
     @description.hide
     @description.gem = self
@@ -46,7 +46,7 @@ class Gemstone < Actor
   end  
   
   def combine(othergem)
-    if self.class == othergem.class and (@subtypes == nil or @subtypes.size == 0)
+    if self.class == othergem.class and @gemtypes.size == 1 and othergem.gemtypes.size == 1
       combine_pure(othergem)
     else
       combine_unpure(othergem)
@@ -59,15 +59,28 @@ class Gemstone < Actor
   end
   
   
+  # when combining two gems, calculate the resulting damage like this:
+  # damage of better gem * 100 + damage of the other gem * pct
+  def add_dmg_pct(dmg1, dmg2, pct)
+    if dmg1 > dmg2
+      return dmg1 + dmg2.to_f * pct/100
+    else
+      return dmg2 + dmg1.to_f * pct/100
+    end   
+  end
+  
   # combine pure gems:
   # gives great damage bonus, gives great special bonus
   # increases saturation (incrased saturatin = better armor penetration later)
   def combine_pure(othergem)
-    @min_damage += othergem.min_damage / 2
-    @max_damage += othergem.max_damage / 2
-    @recharge_time = (@recharge_time + othergem.recharge_time) / 2.02
-    @range = (@range + othergem.range) / 1.97    
-    @special_modificator += 0.2
+    
+    @min_damage = add_dmg_pct(@min_damage, othergem.min_damage, 55)
+    @max_damage = add_dmg_pct(@max_damage, othergem.max_damage, 85)
+    
+    @recharge_time = (@recharge_time + othergem.recharge_time) / 2.08
+    @range = (@range + othergem.range) / 1.96    
+ 
+ #   @special_modificator += 0.2
     @saturation = (@saturation + othergem.saturation) / 1.9
   end
 
@@ -75,12 +88,14 @@ class Gemstone < Actor
   # gives moderate damage bonus, good recharge & range bonus
   # specials will have lower effects
   def combine_unpure(othergem)
-    @min_damage += othergem.min_damage / 4
-    @max_damage += othergem.max_damage / 4
-    @recharge_time = (@recharge_time + othergem.recharge_time) / 2.04
+    @min_damage = add_dmg_pct(@min_damage, othergem.min_damage, 35)
+    @max_damage = add_dmg_pct(@max_damage, othergem.max_damage, 65)
+
+    @recharge_time = (@recharge_time + othergem.recharge_time) / 2.12
     @range = (@range + othergem.range) / 1.92 
-    @special_modificator += 0.01
-    @subtypes << othergem.class
+  #  @special_modificator += 0.01
+    @gemtypes += othergem.gemtypes
+    @gemtypes.uniq!
   end
 
 
