@@ -2,7 +2,7 @@ class MonsterView < ActorView
   
   def draw(target, x_off, y_off)
     return unless @actor.alive?
-    x = @actor.x + 8
+    x = @actor.x 
     y = @actor.y + 8 
     monster = @mode.resource_manager.load_image "monster/monster1.png"
     
@@ -50,7 +50,7 @@ class Monster < Actor
     @speed = 1
     @hitpoints = 20
     @max_hitpoints = 20
-    
+    @tilepos  = [0,0]
   end
   
   def alive?
@@ -79,25 +79,18 @@ class Monster < Actor
     unless @pathitem 
       @pathitem = 0           
       @orientation = find_out_origentation(path)
-     # puts "new origentation is #{@orientation.inspect}"
-    end
+      @tilepos = [0,0]
+     end
     
 
-    x, y = simulate_movement
-    # TODO: fix the calculation if we're moving onto a new map tile
-    # the current implementation does only allow a limited speed choice
-    mod_x = (x-MAP_OFFSET[0]) % ITEMSIZE 
-    mod_y = (y-MAP_OFFSET[1]) % ITEMSIZE
-#    puts "modx/y: #{mod_x} , #{mod_y}"
-    if ((@orientation == :right or @orientation == :left) and mod_x == 0) or
-       ((@orientation == :up or @orientation == :down) and mod_y == 0)
+    @tilepos = simulate_movement(@tilepos)
+
+    if @tilepos[0] > 32 or @tilepos[1] > 32 or @tilepos[0] < -32 or @tilepos[1] < -32
+      @tilepos = [0,0]
       @pathitem += 1
-      @orientation = find_out_origentation(path)        
-      x, y = simulate_movement
-   #   puts "new origentation is #{@orientation.inspect}"
+      @orientation = find_out_origentation(path)      
     end
-    @x = x
-    @y = y
+    @x, @y = simulate_movement([@x,@y])
   end
   
   def find_out_origentation(path)
@@ -107,18 +100,17 @@ class Monster < Actor
     get_origentation(pos1, pos2) # tools.rb
   end
   
-  def simulate_movement
-    x = @x
-    y = @y
+  def simulate_movement(pos)
+    x, y = pos
     case @orientation
       when :right    
-          x = @x + @speed
+          x = x + @speed
       when :left
-          x = @x - @speed
+          x = x - @speed
       when :up
-          y = @y - @speed
+          y = y - @speed
       when :down 
-          y = @y + @speed
+          y = y + @speed
     end
     return [x,y]
   end

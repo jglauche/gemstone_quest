@@ -30,6 +30,8 @@ class Wave < Actor
   
   def spawn_wave!
     @wave_number+=1
+
+    
     case @wave_number
       when 1
         5.times do
