@@ -1,6 +1,7 @@
 require 'level'
 require 'ftor'
 require "gemstone"
+require "tower"
 require "particle"
 class DemoLevel < Level
   def setup
@@ -100,15 +101,25 @@ class DemoLevel < Level
     end
     
     input_manager.reg MouseMotionEvent do |ev|
-      unless @active_tower == nil
+      if @active_tower
         @active_tower = @active_tower.hide_radius
         @active_tower = nil
       end
-      if item = get_gem_accepting_object_on_this_position(ev.pos)
+      
+      if @active_gemstone
+        @active_gemstone.hide_description
+        @active_gemstone = nil
+      end
+      
+      if item = check_if_inventory_item_is_triggered(ev.pos) || get_gem_accepting_object_on_this_position(ev.pos)
         if item.class == Tower and item.gemstone != nil
           @active_tower = item
           item.show_radius
         end
+        if item.gemstone != nil 
+          @active_gemstone = item.gemstone
+          @active_gemstone.show_description(50,550)
+        end        
       end
     end 
     

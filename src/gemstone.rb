@@ -34,6 +34,9 @@ class Gemstone < Actor
   def setup
     @special_modificator = 1
     @subtypes = []
+    @description = spawn :gem_description, :visible => false
+    @description.hide
+    @description.gem = self
   end
 
   def self.choose_gem_to_create
@@ -60,8 +63,8 @@ class Gemstone < Actor
   # gives great damage bonus, gives great special bonus
   # increases saturation (incrased saturatin = better armor penetration later)
   def combine_pure(othergem)
-    @min_damage += othergem.min_damage / 2.0
-    @max_damage += othergem.max_damage / 1.5
+    @min_damage += othergem.min_damage / 2
+    @max_damage += othergem.max_damage / 2
     @recharge_time = (@recharge_time + othergem.recharge_time) / 2.02
     @range = (@range + othergem.range) / 1.97    
     @special_modificator += 0.2
@@ -72,8 +75,8 @@ class Gemstone < Actor
   # gives moderate damage bonus, good recharge & range bonus
   # specials will have lower effects
   def combine_unpure(othergem)
-    @min_damage = othergem.min_damage / 8.0
-    @max_damage += othergem.max_damage / 2.0
+    @min_damage += othergem.min_damage / 4
+    @max_damage += othergem.max_damage / 4
     @recharge_time = (@recharge_time + othergem.recharge_time) / 2.04
     @range = (@range + othergem.range) / 1.92 
     @special_modificator += 0.01
@@ -108,7 +111,18 @@ class Gemstone < Actor
     @sender.take_gem(self)
     @sender = nil
   end 
-
+  
+  def show_description(x,y)
+    @description.x = x
+    @description.y = y
+#    @description.gem_type = self.class
+#    @description.subtypes = @subtypes
+    @description.show
+  end
+  
+  def hide_description
+    @description.hide
+  end
 
 
 end
