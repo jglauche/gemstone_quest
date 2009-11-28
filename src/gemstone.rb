@@ -1,11 +1,11 @@
 class GemstoneView < ActorView
   def draw(target, x, y)
-    position = [@actor.x, @actor.y]
-    gem =  @mode.resource_manager.load_image "gem.png"
+    position = [actor.x, actor.y]
+    gem =  stage.resource_manager.load_image "gem.png"
     gem.blit(target.screen,position) 
 
     polygons.each do |poly|
-      target.draw_polygon(add_offset(position, poly), @actor.get_color)
+      target.draw_polygon(add_offset(position, poly), actor.get_color)
     end
     #target.screen.draw_box_s(position,[x+15,y+15], get_color)
   end

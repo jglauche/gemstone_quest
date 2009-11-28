@@ -1,14 +1,14 @@
 class MonsterView < ActorView
   
   def draw(target, x_off, y_off)
-    return unless @actor.alive?
-    x = @actor.x + 8
-    y = @actor.y + 8 
-    monster = @mode.resource_manager.load_image "monster/monster1.png"
+    return unless actor.alive?
+    x = actor.x + 8
+    y = actor.y + 8 
+    monster = stage.resource_manager.load_image "monster/monster1.png"
     
     # std monster origentation should be :right
     rot = 0
-    case @actor.orientation 
+    case actor.orientation 
       when :down  
         rot = -90
       when :up
@@ -23,8 +23,8 @@ class MonsterView < ActorView
     monster.blit(target.screen,[x,y])  
     
     # health bar
-    if @actor.max_hitpoints > 0
-      hp = 15 * @actor.hitpoints / @actor.max_hitpoints
+    if actor.max_hitpoints > 0
+      hp = 15 * actor.hitpoints / actor.max_hitpoints
       if hp > 10 
         color = [0,255,0]
       elsif hp > 5

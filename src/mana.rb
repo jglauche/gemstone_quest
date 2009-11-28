@@ -1,16 +1,16 @@
 class ManaView < ActorView
   def draw(target, x_off, y_off)
-    font = @mode.resource_manager.load_font 'FreeSans.ttf', 12
+    font = stage.resource_manager.load_font 'FreeSans.ttf', 12
     return if font.nil?
     
-    str = "Mana: #{sprintf('%0.1f',@actor.mana)} / #{@actor.max_mana}"
+    str = "Mana: #{sprintf('%0.1f',actor.mana)} / #{actor.max_mana}"
     
     24 - str.size.times do 
       str << " "
     end 
  
     text = font.render str, true, [255,255,255] #, [0,0,0]
-    text.blit target.screen, [@actor.x, @actor.y]
+    text.blit target.screen, [actor.x, actor.y]
   end
 end
 
