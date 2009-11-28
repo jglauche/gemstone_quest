@@ -1,6 +1,5 @@
 class Malachite < Gemstone
-  has_behaviors :updatable, :layered => {:layer => 3}
-  
+   
 
   def setup
     @range = 100

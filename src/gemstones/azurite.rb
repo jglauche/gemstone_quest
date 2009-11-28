@@ -1,6 +1,5 @@
 class Azurite < Gemstone
-  has_behaviors :updatable, :layered => {:layer => 3}
-  
+   
   def setup
     @range = 80
     @color = [0,0,255]

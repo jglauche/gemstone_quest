@@ -1,6 +1,5 @@
 class Diamond < Gemstone
-  has_behaviors :updatable, :layered => {:layer => 3}
-    
+     
   def setup
     @range = 110
     @color = [251,255,241]
