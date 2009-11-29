@@ -43,6 +43,10 @@ class Mana < Actor
       end
     end
   end
+  
+  def can_upgrade?
+    return has?(@upgrade_cost)
+  end
    
   def tower_cost
     200 * (1 + 0.2 * @towers_built)

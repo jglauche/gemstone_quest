@@ -32,14 +32,15 @@ class DemoStage < Stage
     @monsters = []
     @particles = []
 
-    # will put that into a stage config file later..
-    @path = [[0,3],[1,3],[2,3],[3,3],[4,3],[5,3],[6,3],[6,4],[6,5],[7,5],[8,5],[9,5],[10,5],[11,5],[11,4],[11,3],[10,3],[9,3],[8,3],[8,2],[8,1],[9,1],[10,1],[11,1],[12,1],[13,1],[14,1],[14,2],[14,3],[15,3],[16,3],[17,3],[18,3],[19,3],[20,3]]
-
+    @level = create_actor :level
+    unless @level.load(1) # TODO: GUI for selecting the level
+      puts "could not load level."
+    end
     track_creator = create_actor :track_creator
-    track_creator.create_tracks(@path)
+    track_creator.create_tracks(@level.monster_path)
 
     @wave = create_actor :wave
-    @wave.start_coordinates = @path.first
+    @wave.start_coordinates = @level.monster_path.first
 
 
     reset_hooks  
@@ -48,7 +49,7 @@ class DemoStage < Stage
 
   # for map positions only
   def object_on_this_position?(x,y)
-    @towers.map{|t| [t.x,t.y] == [x,y]}.include? true or @path.include?(pos_to_map_coordinates([x,y]))   
+    @towers.map{|t| [t.x,t.y] == [x,y]}.include? true or @level.monster_path.include?(pos_to_map_coordinates([x,y]))   
   end
 
   def get_gem_accepting_object_on_this_position(pos)
@@ -214,7 +215,7 @@ class DemoStage < Stage
     end
 
     # Monster move
-    @monsters.map{|l| l.move(@path)}
+    @monsters.map{|l| l.move(@level.monster_path)}
     # towers recharge & "collect" their shots fired
     ret = @towers.map{|l| l.tick(time, @monsters)}
     ret.each do |r|
