@@ -32,6 +32,7 @@ class Particle < Actor
     if get_distance([@x,@y], [mx,my]) < 10 
       @monster.take_damage(@damage)
       @alive = false
+      #play_sound :hit
     end 
     
     dx = (mx-@x).to_f
