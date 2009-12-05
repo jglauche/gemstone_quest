@@ -49,7 +49,9 @@ class DemoStage < Stage
 
   # for map positions only
   def object_on_this_position?(x,y)
-    @towers.map{|t| [t.x,t.y] == [x,y]}.include? true or @level.monster_path.include?(pos_to_map_coordinates([x,y]))   
+    return true if @towers.map{|t| [t.x,t.y] == [x,y]}.include? true    
+    return true if @level.monster_path.include?(pos_to_map_coordinates([x,y]))
+    false
   end
 
   def get_gem_accepting_object_on_this_position(pos)
@@ -180,7 +182,7 @@ class DemoStage < Stage
         input_manager.reg MouseDownEvent do |ev|
           unless @buildmode.nil?
             x,y = @buildmode.get_build_position ev.pos          
-            unless object_on_this_position?(x,y)
+            if !object_on_this_position?(x,y) and in_map_bounds?([x,y]) 
               if @mana.take(@mana.tower_cost)
                 @towers << create_actor(:tower, :x => x, :y => y)
               end

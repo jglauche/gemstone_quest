@@ -8,7 +8,7 @@ end
 
 def in_bounds?(pos, startx, starty, offset_x, offset_y)
   x, y = pos
-  
+
   if x >= startx and x < startx + offset_x
     if y >= starty and y < starty + offset_y
       return true
@@ -39,9 +39,9 @@ end
   end
   
 
-  def in_map_bounds?(mouse)
+  def in_map_bounds?(pos)
     ox, oy = MAP_OFFSET
-    in_bounds?(mouse, ox, oy, ox+MAP_BLOCKS_X*ITEMSIZE, oy+MAP_BLOCKS_Y*ITEMSIZE)
+    in_bounds?(pos, ox, oy, ox+MAP_BLOCKS_X*ITEMSIZE-ITEMSIZE, oy+MAP_BLOCKS_Y*ITEMSIZE-ITEMSIZE)
   end
   
   def add_offset(pos, arr)
